@@ -276,6 +276,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <button class="gen-btn" id="gb" onclick="openModal()" disabled>Enviar productos a cotizar</button>
   <div class="legal-note">Dronatech revisará disponibilidad y le enviará la cotización con precios.</div>
   <div class="status-msg" id="sm"></div>
+  <div id="wa-debug" style="display:none;margin-top:6px"></div>
 </div>
 
 <div class="modal-overlay" id="mo">
@@ -381,9 +382,16 @@ function submitOrder(){
   });
   lines.push('Nota:','Solicito revisi\u00f3n de disponibilidad y cotizaci\u00f3n de estos repuestos.');
   var txt=lines.join('\n');
-  if(isMob())window.open('https://wa.me/593982696395?text='+encodeURIComponent(txt),'_blank');
-  setTimeout(function(){window.print();},400);
-  document.getElementById('sm').textContent='Pedido generado.'+(isMob()?' Se abri\u00f3 WhatsApp.':'')+' Preparando PDF...';
+  var waUrl='https://wa.me/593982696395?text='+encodeURIComponent(txt);
+  var dbg=document.getElementById('wa-debug');
+  if(dbg){dbg.innerHTML='<a href="'+waUrl+'" target="_blank" rel="noopener" style="display:block;text-align:center;padding:10px;background:#25d366;color:#fff;border-radius:8px;font-weight:800;font-size:14px;text-decoration:none">WhatsApp no abrió? Toca aquí</a>';dbg.style.display='block';}
+  if(isMob()){
+    window.location.href=waUrl;
+  } else {
+    window.open(waUrl,'_blank');
+    setTimeout(function(){window.print();},500);
+  }
+  document.getElementById('sm').textContent=isMob()?'Abriendo WhatsApp…':'Preparando PDF…';
 }
 
 // Qty-based selection: qty > 0 = selected (no Seleccionar button needed)
